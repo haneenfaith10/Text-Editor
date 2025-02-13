@@ -26,11 +26,8 @@ import {
   AlignJustify,
   List,
   ListOrdered,
-  Plus,
   Bot,
   CheckSquare,
-  Indent as IndentIcon,
-  Outdent as OutdentIcon,
   Palette,
   Type,
   Rocket,
@@ -42,9 +39,14 @@ import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import TextStyle from "@tiptap/extension-text-style";
 
+interface ColorType {
+  name: string;
+  color: string;
+}
+
 const RichTextEditor = () => {
   // 1. Define constants first (move these to the top)
-  const colors = [
+  const colors: ColorType[] = [
     { name: "Default", color: "#000000" },
     { name: "Gray", color: "#6B7280" },
     { name: "Red", color: "#EF4444" },
@@ -140,7 +142,7 @@ const RichTextEditor = () => {
 
   // 5. All callback functions
   const setTextColor = useCallback(
-    (color: any) => {
+    (color: string) => {
       editor?.chain().focus().setColor(color).run();
       setIsTextColorDropdownOpen(false);
     },
@@ -166,13 +168,6 @@ const RichTextEditor = () => {
     if (editor.isActive("heading", { level: 2 })) return "Heading 2";
     if (editor.isActive("heading", { level: 3 })) return "Heading 3";
     return "Paragraph";
-  };
-
-  const addImage = () => {
-    const url = window.prompt("Enter image URL:");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
   };
 
   const addLink = () => {
@@ -368,12 +363,12 @@ const RichTextEditor = () => {
     urlInput.focus();
   };
 
-  const handleImageUpload = (event: any) => {
-    const file = event.target.files[0];
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target && e.target.result) {
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
           editor
             .chain()
             .focus()
@@ -394,13 +389,13 @@ const RichTextEditor = () => {
     setIsImageDropdownOpen(false);
   };
 
-  const handleDragDrop = (event: any) => {
+  const handleDragDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
+    if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target && e.target.result) {
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
           editor
             .chain()
             .focus()
@@ -941,7 +936,7 @@ const RichTextEditor = () => {
                 !editor.isActive("orderedList") && (
                   <List size={18} className="text-black" />
                 )}
-                
+
               <ChevronDown size={16} />
             </button>
             {isListDropdownOpen && (
