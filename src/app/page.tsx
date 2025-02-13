@@ -941,6 +941,7 @@ const RichTextEditor = () => {
                 !editor.isActive("orderedList") && (
                   <List size={18} className="text-black" />
                 )}
+                
               <ChevronDown size={16} />
             </button>
             {isListDropdownOpen && (
